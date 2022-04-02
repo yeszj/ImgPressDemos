@@ -9,26 +9,17 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import cn.qw.simplecompress.SimpleCompressManager;
-import cn.qw.simplecompress.bean.CompressPhotoInfo;
 import cn.qw.simplecompress.config.SimpleCompressConfig;
-import cn.qw.simplecompress.listener.CompressResultListener;
 import cn.qw.simplecompress.listener.CompressSingleResultListener;
 import cn.qw.simplecompress.utils.CacheUtils;
 import cn.qw.simplecompress.utils.CommonUtils;
 import cn.qw.simplecompress.utils.Constants;
-import cn.qw.simplecompress.utils.SimpleComPressUtil;
 import cn.qw.simplecompress.utils.UriParseUtils;
-import top.zibin.luban.CompressionPredicate;
-import top.zibin.luban.Luban;
-import top.zibin.luban.OnCompressListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,6 +53,31 @@ public class MainActivity extends AppCompatActivity {
         }).startSingleCompress(imgPath);
     }
 
+//    //多张图片压缩
+//    List<CompressPhotoInfo> list;
+//    private void startCompress(String imgPath) {
+//        list = new ArrayList<>();
+//        CompressPhotoInfo photoInfo = new CompressPhotoInfo();
+//        photoInfo.setOriginalPath(imgPath);
+//        list.add(photoInfo);
+//        SimpleCompressConfig simpleCompressConfig = SimpleCompressConfig.builder().
+//                setMaxSize(100 * 1024).
+//                setCacheDir(Constants.BASE_CACHE_PATH + getPackageName() + "/cache/" + Constants.SIMPLE_COMPRESS_CACHE)
+//                .create();
+//        SimpleCompressManager.build(this, simpleCompressConfig, list, new CompressResultListener() {
+//            @Override
+//            public void onCompressSuccess(List<CompressPhotoInfo> compressSuccessList) {
+//                CompressPhotoInfo photoInfo = compressSuccessList.get(0);
+//                String compressPath = photoInfo.getCompressPath();
+//                Log.d("------->", String.format("压缩成功,输出路径为：%s", compressPath));
+//            }
+//            @Override
+//            public void onCompressFail(List<CompressPhotoInfo> compressImgList) {
+//                Log.d("------->", "压缩失败");
+//            }
+//        }).startCompress();
+//    }
+
     private String cameraCachePath;
 
     private void camera() {
@@ -89,35 +105,5 @@ public class MainActivity extends AppCompatActivity {
                 startCompress(cameraCachePath);
             }
         }
-    }
-
-    private void testLuban() {
-        String targetDir = Constants.BASE_CACHE_PATH + getPackageName() + "/cache/compress_cache";
-        Luban.with(this)
-                .load("")//源文件路径
-                .ignoreBy(100)
-                .setTargetDir(targetDir) //压缩后路径
-                .filter(new CompressionPredicate() {
-                    @Override
-                    public boolean apply(String path) {
-                        return !(TextUtils.isEmpty(path) || path.toLowerCase().endsWith(".gif"));
-                    }
-                })
-                .setCompressListener(new OnCompressListener() {
-                    @Override
-                    public void onStart() {
-                        // TODO 压缩开始前调用，可以在方法内启动 loading UI
-                    }
-
-                    @Override
-                    public void onSuccess(File file) {
-                        // TODO 压缩成功后调用，返回压缩后的图片文件
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        // TODO 当压缩过程出现问题时调用
-                    }
-                }).launch();
     }
 }
